@@ -1,0 +1,30 @@
+{
+  "name": "oh-my-logs",
+  "version": "1.0.0",
+  "description": "oh-my-logs my first JS project",
+  "main": "index.js",
+  "scripts": {
+    "test": "xo && jest"
+  },
+  "author": "deepaktomar7",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "pug": "^2.0.0-beta6"
+  },
+  "devDependencies": {
+    "jest": "^17.0.3",
+    "xo": "^0.17.1"
+  },
+  "xo": {
+    "esnext": true,
+    "globals": [
+      "describe",
+      "test",
+      "expect"
+    ],
+    "space": true,
+    "fix": true,
+    "ignores": ["public/**/*.js"]
+  }
+}
