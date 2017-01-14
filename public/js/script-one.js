@@ -1,4 +1,8 @@
-$('#fileList').click(() => {
-  console.log('You just Clicked!');
-  alert(window.location.pathname);
-});
+var st = window.location.href;
+var arr = st.split('/');
+
+arr.pop();
+
+st = arr.join('/');
+console.log(st);
+$('#back-btn').attr('href', st);

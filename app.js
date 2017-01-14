@@ -18,13 +18,31 @@ function printFunction(concernedFilePath, dirString, req, res) {
       return;
     }
 
+    const strArr = dirString.split('/');
+    let stVal;
+
+    if (strArr.length === 1) {
+      stVal = "root";
+    } else {
+      stVal = strArr.pop();
+    }
+
+
     if (stats.isFile()) {
       fs.readFile(concernedFilePath, (err, fileContents) => {
         if (err) {
           console.error(err);
           return;
         }
-        res.json(fileContents.toString());
+        //res.json(fileContents.toString());
+        //console.log(typeof fileContents);
+        res.render('index', {
+          title: 'OH-MY-LOGS!',
+          msg: stVal,
+          prev: dirString,
+          notLast: false,
+          arr: fileContents.toString
+        })
       });
     } else {
       fs.readdir(concernedFilePath, (err, files) => {
@@ -32,12 +50,39 @@ function printFunction(concernedFilePath, dirString, req, res) {
           console.error(err);
         }
 
-        const strArr = dirString.split('/');
-        res.render('index', {title: 'OH-MY-LOGS', msg: strArr.pop(), prev: dirString, arr: files});
+        // console.log(stVal);
+        let filesArrayObj = [];
+        for (let i = 0; i < files.length; i++) {
+          let statRet = fs.statSync(path.join(concernedFilePath, files[i]));
+
+          let fType = statRet.isFile() ? 'file_img.png' : 'folder_img.jpg';
+          filesArrayObj.push({
+            'fileName': files[i],
+            'fileType': fType
+          });
+        }
+
+        res.render('index', {
+          title: 'OH-MY-LOGS!',
+          msg: stVal,
+          prev: dirString,
+          notLast: true,
+          arr: filesArrayObj
+        });
       });
     }
   });
 }
+
+app.use((req, res, next) => {
+  var dirSt = req.query.dir;
+  if (typeof dirSt !== 'undefined' && dirSt.indexOf("..") !== -1) {
+    printFunction(__dirname, '', req, res);
+    return;
+  }
+
+  next();
+});
 
 app.get('/', (req, res) => {
   let dirString = req.query.dir;
@@ -50,7 +95,7 @@ app.get('/', (req, res) => {
     concernedFilePath = path.join(__dirname, dirString);
   }
 
-  console.log(concernedFilePath);
+  //console.log(concernedFilePath);
   printFunction(concernedFilePath, dirString, req, res);
 });
 
